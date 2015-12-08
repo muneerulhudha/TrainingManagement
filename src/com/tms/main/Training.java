@@ -109,14 +109,6 @@ public class Training {
 		this.trainingType = trainingType;
 	}
 	
-	public void createNewTrainingSession(){
-		
-	}
-	
-	public void getTrainingInformation(){
-		
-	}
-	
 	public void cancelTraining(){
 		
 	}

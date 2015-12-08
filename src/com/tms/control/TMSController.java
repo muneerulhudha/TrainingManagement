@@ -12,9 +12,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.tms.beans.Administrator;
 import com.tms.beans.Trainee;
 import com.tms.main.Enroll;
 import com.tms.main.Training;
@@ -56,6 +56,12 @@ public class TMSController {
 					request.setAttribute("enrolledTrainingList", trainings);
 					RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
 					rd.forward(request, response);
+				} else if(type.equals("Adm")){
+					Administrator admin = new Administrator(id);
+					List<Training> trainings = admin.getAllTrainings();
+					request.setAttribute("allTrainingList", trainings);
+					RequestDispatcher rd = request.getRequestDispatcher("Admin.jsp");
+					rd.forward(request, response);
 				}
 
 			} else {
@@ -85,18 +91,34 @@ public class TMSController {
 		JSONObject obj = null;
 		
 		try{
-			Trainee t = new Trainee(empID);
-			List<Training> trainingList = t.getEnrolledTrainings();
-		
-			obj = new JSONObject();
-			obj.put("ID", id);
-			obj.put("type", type);
+			if(type.equals("Emp")){
+				Trainee t = new Trainee(empID);
+				List<Training> trainingList = t.getEnrolledTrainings();
 			
-			response.setContentType("text/html");
-			request.setAttribute("LoginData", obj);
-			request.setAttribute("enrolledTrainingList", trainingList);
-			RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
-			rd.forward(request, response);
+				obj = new JSONObject();
+				obj.put("ID", id);
+				obj.put("type", type);
+				
+				response.setContentType("text/html");
+				request.setAttribute("LoginData", obj);
+				request.setAttribute("enrolledTrainingList", trainingList);
+				RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
+				rd.forward(request, response);
+			}else if(type.equals("Adm")){
+				Administrator adm = new Administrator(empID);
+				List<Training> trainingList = adm.getAllTrainings();
+			
+				obj = new JSONObject();
+				obj.put("ID", id);
+				obj.put("type", type);
+				
+				response.setContentType("text/html");
+				request.setAttribute("LoginData", obj);
+				request.setAttribute("allTrainingList", trainingList);
+				RequestDispatcher rd = request.getRequestDispatcher("Admin.jsp");
+				rd.forward(request, response);
+			}
+			
 		
 		}catch(Exception e){
 			e.printStackTrace();
@@ -109,23 +131,42 @@ public class TMSController {
 
 		String empID = request.getParameter("empID");
 		JSONObject obj = null;
+		if(type.equals("Emp")){
+			Trainee t = new Trainee(empID);
+			List<Trainee> tList = new ArrayList<Trainee>();
+			try {
+				obj = new JSONObject();
+				obj.put("ID", id);
+				obj.put("type", type);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			tList.add(t);
+			response.setContentType("text/html");
 
-		Trainee t = new Trainee(empID);
-		List<Trainee> tList = new ArrayList<Trainee>();
-		try {
-			obj = new JSONObject();
-			obj.put("ID", id);
-			obj.put("type", type);
-		} catch (Exception e) {
-			e.printStackTrace();
+			request.setAttribute("traineeDetails", tList);
+			request.setAttribute("LoginData", obj);
+			RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
+			rd.forward(request, response);
+		}else if (type.equals("Adm")){
+			Administrator adm = new Administrator(empID);
+			List<Administrator> admList = new ArrayList<Administrator>();
+			try {
+				obj = new JSONObject();
+				obj.put("ID", id);
+				obj.put("type", type);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			admList.add(adm);
+			response.setContentType("text/html");
+
+			request.setAttribute("adminDetails", admList);
+			request.setAttribute("LoginData", obj);
+			RequestDispatcher rd = request.getRequestDispatcher("Admin.jsp");
+			rd.forward(request, response);
 		}
-		tList.add(t);
-		response.setContentType("text/html");
-
-		request.setAttribute("traineeDetails", tList);
-		request.setAttribute("LoginData", obj);
-		RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
-		rd.forward(request, response);
+		
 	}
 
 	public static void withdrawTraining(HttpServletRequest request, HttpServletResponse response) {
