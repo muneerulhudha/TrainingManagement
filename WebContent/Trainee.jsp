@@ -54,8 +54,42 @@
 		});
 	}
 	
+	function enrollTraining(btn){
+		var tID = btn.value;
+		$.ajax({			
+			url: "/TrainingManagement/TMSServlet",
+			method: "POST",
+			data: {
+				empID : "<%=ID%>",
+				trainingID : tID,
+				hiddenValue : "6"
+			},
+			success:function( data ){	
+				window.location.reload();
+			}
+		});
+	}
+	
+	function findTraining(){
+		$("#dashboard").hide();
+		$("#profilePage").hide();
+		$("#findTraining").show();
+		$.ajax({			
+			url: "/TrainingManagement/TMSServlet",
+			method: "POST",
+			data: {
+				empID : "<%=ID%>",
+				hiddenValue : "5"
+			},
+			success:function( data ){		
+				$('#findTraining').replaceWith($(data).find('#findTraining').show());
+			}
+		});	
+	}
+	
 	function loadProfile(){
 		$("#dashboard").hide();
+		$("#findTraining").hide();
 		$("#profilePage").show();
 		$.ajax({			
 			url: "/TrainingManagement/TMSServlet",
@@ -97,7 +131,7 @@
       <div class="row">
         <div class="col-sm-3 col-md-2 sidebar">
           <ul class="nav nav-sidebar">
-            <li class="active"><a href="#">Find Training Session<span class="sr-only">(current)</span></a></li>
+            <li class="active"><a href="#" onClick="findTraining()">Find Training Session<span class="sr-only">(current)</span></a></li>
           </ul>
           <ul class="nav nav-sidebar">
             <li><a href="">Logout</a></li>
@@ -116,9 +150,36 @@
 				</c:forEach> 
         	</div> 
         </div>
+        
+        <div class="col-sm-9" id="findTraining" style="display: none;">
+	        <h2 class="sub-header">List of Enrolled Trainings</h2>
+	          <div class="table-responsive">
+	            <table class="table table-striped">
+	              <thead>
+	                <tr>
+	                  <th>Training ID</th>
+	                  <th>Training Name</th>
+	                  <th>TrainingType</th>
+	                  <th>Enroll</th>
+	                </tr>
+	              </thead>
+	              <tbody>
+	                <c:forEach items="${availableTrainingList}" var="trainingList">
+					 	<tr>	
+							<td><c:out value="${trainingList.getTrainingID()}"></c:out></td>  
+							<td><c:out value="${trainingList.getTrainingName()}"></c:out></td>
+							<td><c:out value="${trainingList.getTrainingType()}"></c:out></td>  
+							<td><button class="btn btn-sm btn-primary" value="${trainingList.getTrainingID()}" onClick="javascript:enrollTraining(this);">Enroll?</button></td>   
+						</tr>
+				 	</c:forEach>  
+	              </tbody>
+	            </table>
+	          </div>
+        </div>
+        
         <div class="col-sm-9" id ="dashboard">
 
-          <h2 class="sub-header">List of Enrolled Trainings</h2>
+          <h2 class="sub-header">List of Available Trainings</h2>
           <div class="table-responsive">
             <table class="table table-striped">
               <thead>

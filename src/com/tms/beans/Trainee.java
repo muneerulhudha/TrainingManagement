@@ -61,7 +61,38 @@ public class Trainee extends Person{
 		}finally{
 			DBManager.close(statement, conn);
 		}
-		return null;	
+		return null;		
+	}
+	
+	public List<Training> getAvailableTrainings(){
+		Statement statement = null;
+		ResultSet rs = null;
+		Connection conn = null;
 		
+		statement = DBManager.connect(conn);
+		
+		try {
+
+			List<Training> trainingList = new ArrayList<Training>();
+
+			rs = statement.executeQuery("select TrainingID, Title, Category from TRAINING WHERE TrainingID NOT IN"
+					+ "(SELECT TrainingID FROM enrollment WHERE TraineeID = '" + this.traineeID +"')");
+			
+			while(rs.next()){
+				Training t = new Training();
+				t.setTrainingID(rs.getString(1));
+				t.setTrainingName(rs.getString(2));
+				t.setTrainingType(rs.getString(3));
+				trainingList.add(t);
+			}
+
+			return trainingList;
+			
+		}catch(Exception e){
+			e.printStackTrace();
+		}finally{
+			DBManager.close(statement, conn);
+		}
+		return null;		
 	}
 }

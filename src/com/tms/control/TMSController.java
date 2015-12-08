@@ -23,49 +23,45 @@ public class TMSController {
 
 	public static String id;
 	public static String type;
-	
+
 	public static void loginControl(HttpServletRequest request, HttpServletResponse response) {
-		
+
 		Statement statement = null;
 		ResultSet rs = null;
 		Connection conn = null;
 		JSONObject obj = null;
-		
+
 		statement = DBManager.connect(conn);
-		
+
 		try {
-			rs = statement
-					.executeQuery("select ID, Type_of_User from Login where Username='"
-							+ request.getParameter("userName")
-							+ "' and Password='"
-							+ request.getParameter("passWord") + "'");
+			rs = statement.executeQuery("select ID, Type_of_User from Login where Username='"
+					+ request.getParameter("userName") + "' and Password='" + request.getParameter("passWord") + "'");
 			if (rs.next()) {
 				String id = rs.getString(1);
 				String type = rs.getString(2);
 				System.out.println("ID: " + id);
-				System.out.println("Type: "+ type);
+				System.out.println("Type: " + type);
 				setLoginData(id, type);
 				obj = new JSONObject();
 				obj.put("ID", id);
 				obj.put("Type_of_User", type);
-//				PrintWriter out = response.getWriter();
-//				out.write(obj.toString());
-				
+				// PrintWriter out = response.getWriter();
+				// out.write(obj.toString());
+
 				response.setContentType("text/html");
 				request.setAttribute("LoginData", obj);
-				if(type.equals("Emp")){
+				if (type.equals("Emp")) {
 					Trainee t = new Trainee(id);
 					List<Training> trainings = t.getEnrolledTrainings();
 					request.setAttribute("enrolledTrainingList", trainings);
 					RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
 					rd.forward(request, response);
 				}
-				
 
 			} else {
 				obj = new JSONObject();
 				obj.put("result", "No user found");
-				
+
 				response.setContentType("text/html");
 				request.setAttribute("errorMsg", obj);
 				RequestDispatcher rd = request.getRequestDispatcher("Error.jsp");
@@ -74,7 +70,7 @@ public class TMSController {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		DBManager.close(statement, conn);
 	}
 
@@ -86,32 +82,33 @@ public class TMSController {
 
 	public static void getEnrolledTrainings(HttpServletRequest request, HttpServletResponse response) {
 		String empID = request.getParameter("empID");
-		
+
 		Trainee t = new Trainee(empID);
 		List<Training> trainingList = t.getEnrolledTrainings();
-		
+
 		response.setContentType("text/html");
 		request.setAttribute("enrolledTrainingList", trainingList);
-		
+
 	}
 
-	public static void getProfileInfo(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
+	public static void getProfileInfo(HttpServletRequest request, HttpServletResponse response)
+			throws ServletException, IOException {
+
 		String empID = request.getParameter("empID");
 		JSONObject obj = null;
-		
+
 		Trainee t = new Trainee(empID);
 		List<Trainee> tList = new ArrayList<Trainee>();
-		try{
+		try {
 			obj = new JSONObject();
 			obj.put("ID", id);
 			obj.put("type", type);
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		tList.add(t);
 		response.setContentType("text/html");
-		
+
 		request.setAttribute("traineeDetails", tList);
 		request.setAttribute("LoginData", obj);
 		RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
@@ -122,32 +119,80 @@ public class TMSController {
 		String empID = request.getParameter("empID");
 		String trainingID = request.getParameter("trainingID");
 		JSONObject obj = null;
-		
-		try{
+
+		try {
 			obj = new JSONObject();
 			obj.put("ID", id);
 			obj.put("type", type);
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		Trainee t = new Trainee(empID);
-		Training train = new Training(trainingID);
-		
-		System.out.println("In control " + train.getTrainingID());
-		
-		Enroll enr = new Enroll();
-		enr.withdrawTraining(t, train);
-		try {
+
+			Trainee t = new Trainee(empID);
+			Training train = new Training(trainingID);
+
+			Enroll enr = new Enroll();
+			enr.withdrawTraining(t, train);
+
 			response.setContentType("text/html");
 			request.setAttribute("LoginData", obj);
 			request.setAttribute("message", "You have been withdrawn from the Training.");
 			RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
-		
+
 			rd.forward(request, response);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public static void findTraining(HttpServletRequest request, HttpServletResponse response) {
+		String empID = request.getParameter("empID");
+		JSONObject obj = null;
+
+		try {
+			obj = new JSONObject();
+			obj.put("ID", id);
+			obj.put("type", type);
+
+			Trainee t = new Trainee(empID);
+			List<Training> trainingList = t.getAvailableTrainings();
+
+			response.setContentType("text/html");
+			request.setAttribute("LoginData", obj);
+			request.setAttribute("availableTrainingList", trainingList);
+			RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
+
+			rd.forward(request, response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void enrollTraining(HttpServletRequest request, HttpServletResponse response) {
+		String empID = request.getParameter("empID");
+		String trainingID = request.getParameter("trainingID");
+		JSONObject obj = null;
+
+		try {
+			obj = new JSONObject();
+			obj.put("ID", id);
+			obj.put("type", type);
+
+			Trainee t = new Trainee(empID);
+			Training train = new Training(trainingID);
+
+			Enroll enr = new Enroll();
+			enr.enrollTraining(t, train);
+
+			response.setContentType("text/html");
+			request.setAttribute("LoginData", obj);
+			request.setAttribute("message", "You have been enrolled for the Training.");
+			RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
+
+			rd.forward(request, response);
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
 	}
 
 }
