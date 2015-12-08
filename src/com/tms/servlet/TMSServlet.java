@@ -129,6 +129,10 @@ public class TMSServlet extends HttpServlet {
 		case 6: //enroll a particular trainee for a training
 			TMSController.enrollTraining(request, response);
 			break;
+			
+		case 7: //create new training.
+			TMSController.createNewTraining(request, response);
+			break;
 		}
 	}
 

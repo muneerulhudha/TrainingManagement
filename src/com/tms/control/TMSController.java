@@ -82,13 +82,26 @@ public class TMSController {
 
 	public static void getEnrolledTrainings(HttpServletRequest request, HttpServletResponse response) {
 		String empID = request.getParameter("empID");
-
-		Trainee t = new Trainee(empID);
-		List<Training> trainingList = t.getEnrolledTrainings();
-
-		response.setContentType("text/html");
-		request.setAttribute("enrolledTrainingList", trainingList);
-
+		JSONObject obj = null;
+		
+		try{
+			Trainee t = new Trainee(empID);
+			List<Training> trainingList = t.getEnrolledTrainings();
+		
+			obj = new JSONObject();
+			obj.put("ID", id);
+			obj.put("type", type);
+			
+			response.setContentType("text/html");
+			request.setAttribute("LoginData", obj);
+			request.setAttribute("enrolledTrainingList", trainingList);
+			RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
+			rd.forward(request, response);
+		
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
 	}
 
 	public static void getProfileInfo(HttpServletRequest request, HttpServletResponse response)
@@ -193,6 +206,41 @@ public class TMSController {
 			e.printStackTrace();
 		}
 
+	}
+
+	public static void createNewTraining(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		Statement statement = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		JSONObject obj = null;
+		String empID = request.getParameter("empID");
+		
+		statement = DBManager.connect(conn);
+
+		try {
+			statement.executeUpdate("INSERT INTO TRAINING values ('" + request.getParameter("TrainingID") + "','"
+					+ request.getParameter("empID") + "','" + request.getParameter("Title") + "','"
+					+ request.getParameter("Category") + "'," + request.getParameter("Hours")
+					+ ",NULL,'R2','Pending','" + request.getParameter("Strength") + "')");
+			
+			obj = new JSONObject();
+			obj.put("ID", id);
+			obj.put("type", type);
+			
+			Trainee t = new Trainee(empID);
+			List<Training> trainingList = t.getEnrolledTrainings();
+			
+			response.setContentType("text/html");
+			request.setAttribute("LoginData", obj);
+			request.setAttribute("enrolledTrainingList", trainingList);
+			request.setAttribute("message", "Training Created successfully");
+			RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
+			
+			rd.forward(request, response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 }
