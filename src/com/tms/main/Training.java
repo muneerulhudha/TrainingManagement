@@ -1,10 +1,95 @@
 package com.tms.main;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+
+import com.tms.control.DBManager;
+
 public class Training {
+
 	private String trainingID;
 	private String trainingName;
 	private String trainingType;
+	private String noOfHours;
+	private String startDate;
+	private Room room;
+	private String status;
+
+	public Training() {
+		this.trainingID = null;
+		this.trainingName = null;
+		this.trainingType = null;
+		this.noOfHours = null;
+		this.startDate = null;
+		this.room = null;
+		this.status = null;
+	}
+
+	public String getNoOfHours() {
+		return noOfHours;
+	}
+
+	public String getStartDate() {
+		return startDate;
+	}
+
+	public Room getRoom() {
+		return room;
+	}
+
+	public String getStatus() {
+		return status;
+	}
+
+	public void setNoOfHours(String noOfHours) {
+		this.noOfHours = noOfHours;
+	}
+
+	public void setStartDate(String startDate) {
+		this.startDate = startDate;
+	}
+
+	public void setRoom(Room room) {
+		this.room = room;
+	}
+
+	public void setStatus(String status) {
+		this.status = status;
+	}
+
+	public Training(String trainID){
+		this.trainingID = trainID;
+		this.loadTrainingDetails();
+	}
 	
+	private void loadTrainingDetails() {
+		Statement statement = null;
+		ResultSet rs = null;
+		Connection conn = null;
+		
+		statement = DBManager.connect(conn);
+		try {
+			rs = statement.executeQuery("select Title, Category, No_of_hours, StartDate, RoomID, Status "
+					+ "from Training where TrainingID = '" + this.trainingID +"'");
+			while(rs.next()){
+				this.trainingName = rs.getString(1);
+				this.trainingType = rs.getString(2);
+				this.noOfHours = rs.getString(3);
+				this.startDate = rs.getString(4);
+				this.room = new Room(rs.getString(5));
+				this.status = rs.getString(6);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		DBManager.close(statement, conn);
+		
+	}
+
 	public String getTrainingID() {
 		return trainingID;
 	}

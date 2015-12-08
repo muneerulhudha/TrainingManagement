@@ -6,6 +6,10 @@ public class Room {
 	private Boolean roomAvailability;
 	private int roomCapacity;
 	private int roomLevel;
+	
+	public Room(String rID) {
+		this.roomID = rID;
+	}
 	public String getRoomID() {
 		return roomID;
 	}

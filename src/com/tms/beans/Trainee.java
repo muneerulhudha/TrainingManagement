@@ -3,10 +3,14 @@ package com.tms.beans;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
+
+import com.tms.control.DBManager;
 import com.tms.main.Training;
 
 public class Trainee extends Person{
@@ -16,6 +20,7 @@ public class Trainee extends Person{
 	public Trainee(String id) {
 		// TODO Auto-generated constructor stub
 		this.traineeID = id;
+		this.loadPersonDetails(this.traineeID);
 	}
 
 	public String getTraineeID() {
@@ -28,27 +33,35 @@ public class Trainee extends Person{
 	
 	public List<Training> getEnrolledTrainings(){
 		//write logic to fetch trainings enrolled for the trainee.
-		List<Training> trainings = new ArrayList<Training>();
+		Statement statement = null;
+		ResultSet rs = null;
+		Connection conn = null;
 		
-		Statement stmt = null;
+		statement = DBManager.connect(conn);
+		
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			Connection conn = DriverManager
-					.getConnection(
-							"jdbc:mysql://localhost/test",
-							"muneer", "1234567");
-			stmt = conn.createStatement();
-			//System.out.println(stmt);
+
+			List<Training> trainingList = new ArrayList<Training>();
+
+			rs = statement.executeQuery("select TrainingID, Title, Category from TRAINING WHERE TrainingID IN"
+					+ "(SELECT TrainingID FROM enrollment WHERE TraineeID = '" + this.traineeID +"')");
 			
-			ResultSet rs = stmt.executeQuery("select TrainingID, EnrollStatus from Enrollment where TraineeID ='"+ this.traineeID +"'");
+			while(rs.next()){
+				Training t = new Training();
+				t.setTrainingID(rs.getString(1));
+				t.setTrainingName(rs.getString(2));
+				t.setTrainingType(rs.getString(3));
+				trainingList.add(t);
+			}
+
+			return trainingList;
 			
-		} catch (Exception e) {
+		}catch(Exception e){
 			e.printStackTrace();
+		}finally{
+			DBManager.close(statement, conn);
 		}
-		
-		
-		
-		return trainings;
+		return null;	
 		
 	}
 }

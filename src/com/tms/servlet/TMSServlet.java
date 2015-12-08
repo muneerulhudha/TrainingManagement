@@ -21,6 +21,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.JSONObject;
 
 import com.tms.beans.Trainee;
+import com.tms.control.DBManager;
+import com.tms.control.TMSController;
 import com.tms.main.Training;
 
 /**
@@ -36,38 +38,6 @@ public class TMSServlet extends HttpServlet {
     public TMSServlet() {
         // TODO Auto-generated constructor stub
     }
-
-    protected Statement connect(Connection conn) {
-
-		Statement stmt = null;
-		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			conn = DriverManager
-					.getConnection(
-							"jdbc:mysql://localhost/test",
-							"muneer", "1234567");
-			stmt = conn.createStatement();
-			//System.out.println(stmt);
-			
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-
-		return stmt;
-	}
-
-    private void close(Statement stmt, Connection conn) {
-		try {
-			if (stmt != null)
-				stmt.close();
-			if (conn != null)
-				conn.close();
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-
-	}
     
     public static String getRequestContent(HttpServletRequest request)
 			throws IOException {
@@ -122,14 +92,11 @@ public class TMSServlet extends HttpServlet {
 		// TODO Auto-generated method stub
 		//doGet(request, response);
 		
-		//String st = getRequestContent(request);
-	
 		JSONObject json = null;
 		int fromRequest = -1;
 		
 		
 		try {
-			//json = new JSONObject(st);
 			System.out.println("Initalised");
 			System.out.println(request.getParameter("hiddenValue"));
 			fromRequest = Integer.parseInt(request.getParameter("hiddenValue"));
@@ -138,59 +105,22 @@ public class TMSServlet extends HttpServlet {
 			e.printStackTrace();
 		}
 		
-		Statement statement = null;
-		ResultSet rs = null;
-		Connection conn = null;
-		JSONObject obj = null;
-		
 		switch (fromRequest) {
 		case 1: //sign-in
-			statement = connect(conn);
-		
-			try {
-				rs = statement
-						.executeQuery("select ID, Type_of_User from Login where Username='"
-								+ request.getParameter("userName")
-								+ "' and Password='"
-								+ request.getParameter("passWord") + "'");
-				if (rs.next()) {
-					String id = rs.getString(1);
-					String type = rs.getString(2);
-					System.out.println("ID: " + id);
-					System.out.println("Type: "+ type);
-					obj = new JSONObject();
-					obj.put("ID", id);
-					obj.put("Type_of_User", type);
-//					PrintWriter out = response.getWriter();
-//					out.write(obj.toString());
-					
-					response.setContentType("text/html");
-					request.setAttribute("LoginData", obj);
-					if(type.equals("Emp")){
-						Trainee t = new Trainee(id);
-						List<Training> trainings = t.getEnrolledTrainings();
-						RequestDispatcher rd = request.getRequestDispatcher("Trainee.jsp");
-						rd.forward(request, response);
-					}
-					
-
-				} else {
-					obj = new JSONObject();
-					obj.put("result", "No user found");
-					
-					response.setContentType("text/html");
-					request.setAttribute("errorMsg", obj);
-					RequestDispatcher rd = request.getRequestDispatcher("Error.jsp");
-					rd.forward(request, response);
-				}
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			close(statement, conn);
+			TMSController.loginControl(request, response);
 			break;
 		
-		//case 2:
-		
+		case 2: //load enrolled trainings
+			TMSController.getEnrolledTrainings(request, response);
+			break;
+			
+		case 3: //profile page
+			TMSController.getProfileInfo(request, response);
+			break;
+			
+		case 4: //withdraw training for a trainee
+			TMSController.withdrawTraining(request, response);
+			break;
 		}
 	}
 
