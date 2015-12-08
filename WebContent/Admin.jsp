@@ -53,6 +53,38 @@
 		});
 	}
 	
+	function approveTraining(btn){
+		var tID = btn.value;
+		$.ajax({			
+			url: "/TrainingManagement/TMSServlet",
+			method: "POST",
+			data: {
+				empID : "<%=ID%>",
+				trainingID : tID,
+				hiddenValue : "9"
+			},
+			success:function( data ){
+				window.location.reload();
+			}
+		});
+	}
+	
+	function approveTrainingPage(){
+		$("#profilePage").hide();
+		$("#dashboard").hide();
+		$("#approveTraining").show();
+		$.ajax({			
+			url: "/TrainingManagement/TMSServlet",
+			method: "POST",
+			data: {
+				empID : "<%=ID%>",
+				hiddenValue : "8"
+			},
+			success:function( data ){		
+				$('#approveTraining').replaceWith($(data).find('#approveTraining').show());
+			}
+		});
+	}
 	
 	function loadProfile(){
 		$("#dashboard").hide();
@@ -68,6 +100,22 @@
 			success : function(data) {
 				$('#profilePage').replaceWith(
 						$(data).find('#profilePage').show());
+			}
+		});
+	}
+	
+	function rejectTraining(btn){
+		var tID = btn.value;
+		$.ajax({			
+			url: "/TrainingManagement/TMSServlet",
+			method: "POST",
+			data: {
+				empID : "<%=ID%>",
+				trainingID : tID,
+				hiddenValue : "10"
+			},
+			success:function( data ){
+				window.location.reload();
 			}
 		});
 	}
@@ -100,7 +148,7 @@
 		<div class="row">
 			<div class="col-sm-3 col-md-2 sidebar">
 				<ul class="nav nav-sidebar">
-					<li class="active"><a href="#" onClick="approveTraining()">Approve Training Session
+					<li class="active"><a href="#" onClick="approveTrainingPage()">Approve Training Session
 					<span class="sr-only">(current)</span>
 					</a></li>
 				</ul>
@@ -154,14 +202,17 @@
 							</tr>
 						</thead>
 						<tbody>
-							<c:forEach items="${availableTrainingList}" var="trainingList">
+							<c:forEach items="${pendingTrainingList}" var="trainingList">
 								<tr>
 									<td><c:out value="${trainingList.getTrainingID()}"></c:out></td>
 									<td><c:out value="${trainingList.getTrainingName()}"></c:out></td>
 									<td><c:out value="${trainingList.getTrainingType()}"></c:out></td>
-									<td><button class="btn btn-sm btn-primary"
+									<td><button class="btn btn-sm btn-success"
 											value="${trainingList.getTrainingID()}"
-											onClick="javascript:enrollTraining(this);">Enroll?</button></td>
+											onClick="javascript:approveTraining(this);">Approve</button></td>
+									<td><button class="btn btn-sm btn-danger"
+											value="${trainingList.getTrainingID()}"
+											onClick="javascript:rejectTraining(this);">Reject</button></td>
 								</tr>
 							</c:forEach>
 						</tbody>

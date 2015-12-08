@@ -133,6 +133,18 @@ public class TMSServlet extends HttpServlet {
 		case 7: //create new training.
 			TMSController.createNewTraining(request, response);
 			break;
+			
+		case 8: //fetch pending Training session
+			TMSController.getUnapprovedTrainingList(request, response);
+			break;
+			
+		case 9: //approve training session
+			TMSController.approveTrainingSession(request, response);
+			break;
+			
+		case 10: //reject a training session
+			TMSController.rejectTrainingSession(request, response);
+			break;
 		}
 	}
 

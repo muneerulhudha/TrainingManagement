@@ -284,4 +284,72 @@ public class TMSController {
 		}
 	}
 
+	public static void approveTrainingSession(HttpServletRequest request, HttpServletResponse response) {
+		String empID = request.getParameter("empID");
+		JSONObject obj = null;
+		try{
+			obj = new JSONObject();
+			obj.put("ID", id);
+			obj.put("type", type);
+			
+			Administrator admin = new Administrator(empID);
+			admin.approveTrainingSession(request.getParameter("trainingID"));
+			
+			response.setContentType("text/html");
+			request.setAttribute("LoginData", obj);
+			request.setAttribute("message", "Training Approved");
+			RequestDispatcher rd = request.getRequestDispatcher("Admin.jsp");
+			
+			rd.forward(request, response);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public static void getUnapprovedTrainingList(HttpServletRequest request, HttpServletResponse response) {
+		// TODO Auto-generated method stub
+		String empID = request.getParameter("empID");
+		JSONObject obj = null;
+		try{
+			obj = new JSONObject();
+			obj.put("ID", id);
+			obj.put("type", type);
+			
+			Administrator admin = new Administrator(empID);
+			List<Training> trainingList = admin.getPendingTrainingList();
+			
+			response.setContentType("text/html");
+			request.setAttribute("LoginData", obj);
+			request.setAttribute("pendingTrainingList", trainingList);
+			RequestDispatcher rd = request.getRequestDispatcher("Admin.jsp");
+			
+			rd.forward(request, response);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
+	public static void rejectTrainingSession(HttpServletRequest request, HttpServletResponse response) {
+		String empID = request.getParameter("empID");
+		JSONObject obj = null;
+		try{
+			obj = new JSONObject();
+			obj.put("ID", id);
+			obj.put("type", type);
+			
+			Administrator admin = new Administrator(empID);
+			admin.rejectTrainingSession(request.getParameter("trainingID"));
+			
+			response.setContentType("text/html");
+			request.setAttribute("LoginData", obj);
+			request.setAttribute("message", "Training Rejected");
+			RequestDispatcher rd = request.getRequestDispatcher("Admin.jsp");
+			
+			rd.forward(request, response);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+		
+	}
+
 }
