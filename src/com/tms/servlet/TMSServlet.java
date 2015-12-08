@@ -145,6 +145,10 @@ public class TMSServlet extends HttpServlet {
 		case 10: //reject a training session
 			TMSController.rejectTrainingSession(request, response);
 			break;
+			
+		case 11: //logout
+			TMSController.logout(request, response);
+			break;
 		}
 	}
 

@@ -39,6 +39,7 @@
 	function loadDashboard(){
 		$("#approveTraining").hide();
 		$("#profilePage").hide();
+		$('#about').hide();
 		$("#dashboard").show();
 		$.ajax({			
 			url: "/TrainingManagement/TMSServlet",
@@ -55,23 +56,34 @@
 	
 	function approveTraining(btn){
 		var tID = btn.value;
-		$.ajax({			
-			url: "/TrainingManagement/TMSServlet",
-			method: "POST",
-			data: {
-				empID : "<%=ID%>",
-				trainingID : tID,
-				hiddenValue : "9"
-			},
-			success:function( data ){
-				window.location.reload();
-			}
-		});
+		swal({
+			title: "Are you sure?",   
+			text: "The training session will be approved!",   
+			type: "info",   
+			showCancelButton: true,   
+			confirmButtonColor: "#DD6B55",   
+			confirmButtonText: "Yes, Approve!",   
+			closeOnConfirm: false }, 
+			function(){   
+				$.ajax({			
+					url: "/TrainingManagement/TMSServlet",
+					method: "POST",
+					data: {
+						empID : "<%=ID%>",
+						trainingID : tID,
+						hiddenValue : "9"
+					},
+					success:function( data ){
+						window.location.reload();
+					}
+				});
+			});
 	}
 	
 	function approveTrainingPage(){
 		$("#profilePage").hide();
 		$("#dashboard").hide();
+		$('#about').hide();
 		$("#approveTraining").show();
 		$.ajax({			
 			url: "/TrainingManagement/TMSServlet",
@@ -89,6 +101,7 @@
 	function loadProfile(){
 		$("#dashboard").hide();
 		$("#approveTraining").hide();
+		$('#about').hide();
 		$("#profilePage").show();
 		$.ajax({			
 			url: "/TrainingManagement/TMSServlet",
@@ -106,16 +119,46 @@
 	
 	function rejectTraining(btn){
 		var tID = btn.value;
+		swal({
+			title: "Are you sure?",   
+			text: "The training session will be deleted!",   
+			type: "warning",   
+			showCancelButton: true,   
+			confirmButtonColor: "#DD6B55",   
+			confirmButtonText: "Yes, Delete!",   
+			closeOnConfirm: false }, 
+			function(){   
+				$.ajax({			
+					url: "/TrainingManagement/TMSServlet",
+					method: "POST",
+					data: {
+						empID : "<%=ID%>",
+						trainingID : tID,
+						hiddenValue : "10"
+					},
+					success:function( data ){
+						window.location.reload();
+					}
+				});
+			});
+	}
+	
+	function aboutPage(){
+		$("#dashboard").hide();
+		$("#approveTraining").hide();
+		$("#profilePage").hide();
+		$('#about').show();
+	}
+	
+	function logout(){
 		$.ajax({			
 			url: "/TrainingManagement/TMSServlet",
 			method: "POST",
 			data: {
 				empID : "<%=ID%>",
-				trainingID : tID,
-				hiddenValue : "10"
+				hiddenValue : "11"
 			},
-			success:function( data ){
-				window.location.reload();
+			success : function(data) {
 			}
 		});
 	}
@@ -138,7 +181,7 @@
 			<ul class="nav navbar-nav navbar-right">
 				<li><a href="#" onClick="loadDashboard()">Dashboard</a></li>
 				<li><a href="#" onClick="loadProfile()">Profile</a></li>
-				<li><a href="#">About</a></li>
+				<li><a href="#" onClick="aboutPage()">About</a></li>
 			</ul>
 		</div>
 	</div>
@@ -153,7 +196,7 @@
 					</a></li>
 				</ul>
 				<ul class="nav nav-sidebar">
-					<li><a href="">Logout</a></li>
+					<li><a href="index.jsp" onClick="logout()">Logout</a></li>
 				</ul>
 			</div>
 			<div class="col-sm-9" id="profilePage" style="display: none;">
@@ -218,6 +261,19 @@
 						</tbody>
 					</table>
 				</div>
+			</div>
+
+			<div class="col-sm-9" id="about" style="display: none;">
+				<h2 class="sub-header">About</h2>
+				
+				<h4><b>Group project for CS6359 created by</b></h4>
+				<ul>
+					<li>Hamid Muneerulhudhakalvathi
+					<li>Gowtham UmaJaganathan
+					<li>Himanshu Gupta
+					<li>Rajshekar Jetty
+					<li>Sarvotam Pal Singh
+				</ul>
 			</div>
 
 			<div class="col-sm-9" id="dashboard">

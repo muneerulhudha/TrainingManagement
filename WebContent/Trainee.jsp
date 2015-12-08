@@ -42,6 +42,7 @@
 		$("#profilePage").hide();
 		$("#createTraining").hide();
 		$("#findTraining").hide();
+		$('#about').hide();
 		$("#dashboard").show();
 		$.ajax({			
 			url: "/TrainingManagement/TMSServlet",
@@ -58,18 +59,28 @@
 	
 	function withDrawTraining(btn){
 		var tID = btn.value;
-		$.ajax({			
-			url: "/TrainingManagement/TMSServlet",
-			method: "POST",
-			data: {
-				empID : "<%=ID%>",
-				trainingID : tID,
-				hiddenValue : "4"
-			},
-			success:function( data ){	
-				window.location.reload();
-			}
-		});
+		swal({
+			title: "Are you sure?",   
+			text: "You will be withdrawn from the training!",   
+			type: "warning",   
+			showCancelButton: true,   
+			confirmButtonColor: "#DD6B55",   
+			confirmButtonText: "Yes, Withdraw!",   
+			closeOnConfirm: false }, 
+			function(){   
+				$.ajax({			
+					url: "/TrainingManagement/TMSServlet",
+					method: "POST",
+					data: {
+						empID : "<%=ID%>",
+						trainingID : tID,
+						hiddenValue : "4"
+					},
+					success:function( data ){	
+						window.location.reload();
+					}
+				}); 
+			});
 	}
 	
 	function createButtonClick(){
@@ -78,24 +89,35 @@
 	
 	function enrollTraining(btn){
 		var tID = btn.value;
-		$.ajax({			
-			url: "/TrainingManagement/TMSServlet",
-			method: "POST",
-			data: {
-				empID : "<%=ID%>",
-				trainingID : tID,
-				hiddenValue : "6"
-			},
-			success:function( data ){	
-				window.location.reload();
-			}
-		});
+		swal({
+			title: "Are you sure?",   
+			text: "You will be enrolled to the training!",   
+			type: "info",   
+			showCancelButton: true,   
+			confirmButtonColor: "#DD6B55",   
+			confirmButtonText: "Yes, Enroll!",   
+			closeOnConfirm: false }, 
+			function(){   
+				$.ajax({			
+					url: "/TrainingManagement/TMSServlet",
+					method: "POST",
+					data: {
+						empID : "<%=ID%>",
+						trainingID : tID,
+						hiddenValue : "6"
+					},
+					success:function( data ){	
+						window.location.reload();
+					}
+				});
+			});
 	}
 	
 	function createTraining(){
 		$("#dashboard").hide();
 		$("#profilePage").hide();
 		$("#findTraining").hide();
+		$('#about').hide();
 		$("#createTraining").show();
 	}
 	
@@ -103,6 +125,7 @@
 		$("#dashboard").hide();
 		$("#profilePage").hide();
 		$("#createTraining").hide();
+		$('#about').hide();
 		$("#findTraining").show();
 		$.ajax({			
 			url: "/TrainingManagement/TMSServlet",
@@ -111,7 +134,7 @@
 				empID : "<%=ID%>",
 				hiddenValue : "5"
 			},
-			success:function( data ){		
+			success:function( data ){
 				$('#findTraining').replaceWith($(data).find('#findTraining').show());
 			}
 		});	
@@ -121,6 +144,7 @@
 		$("#dashboard").hide();
 		$("#findTraining").hide();
 		$("#createTraining").hide();
+		$('#about').hide();
 		$("#profilePage").show();
 		$.ajax({			
 			url: "/TrainingManagement/TMSServlet",
@@ -132,6 +156,27 @@
 			success : function(data) {
 				$('#profilePage').replaceWith(
 						$(data).find('#profilePage').show());
+			}
+		});
+	}
+	
+	function aboutPage(){
+		$("#dashboard").hide();
+		$("#findTraining").hide();
+		$("#createTraining").hide();
+		$("#profilePage").hide();
+		$('#about').show();
+	}
+	
+	function logout(){
+		$.ajax({			
+			url: "/TrainingManagement/TMSServlet",
+			method: "POST",
+			data: {
+				empID : "<%=ID%>",
+				hiddenValue : "11"
+			},
+			success : function(data) {
 			}
 		});
 	}
@@ -154,7 +199,7 @@
 			<ul class="nav navbar-nav navbar-right">
 				<li><a href="#" onClick="loadDashboard()">Dashboard</a></li>
 				<li><a href="#" onClick="loadProfile()">Profile</a></li>
-				<li><a href="#">About</a></li>
+				<li><a href="#" onClick="aboutPage()">About</a></li>
 			</ul>
 		</div>
 	</div>
@@ -172,7 +217,7 @@
 					</a></li>
 				</ul>
 				<ul class="nav nav-sidebar">
-					<li><a href="">Logout</a></li>
+					<li><a href="index.jsp" onClick="logout()">Logout</a></li>
 				</ul>
 			</div>
 			<div class="col-sm-9" id="profilePage" style="display: none;">
@@ -260,7 +305,7 @@
 									placeholder="Go with 10. Max 20." class="form-control input-md">
 							</div>
 						</div>
-						<br />
+						<br /><br />
 						<div class="form-group">
 							<label class="col-md-4 control-label" for="singlebutton"></label>
 							<div class="col-md-4">
@@ -301,6 +346,19 @@
 						</tbody>
 					</table>
 				</div>
+			</div>
+
+			<div class="col-sm-9" id="about" style="display: none;">
+				<h2 class="sub-header">About</h2>
+				
+				<h4><b>Group project for CS6359 created by</b></h4>
+				<ul>
+					<li>Hamid Muneerulhudhakalvathi
+					<li>Gowtham UmaJaganathan
+					<li>Himanshu Gupta
+					<li>Rajshekar Jetty
+					<li>Sarvotam Pal Singh
+				</ul>
 			</div>
 
 			<div class="col-sm-9" id="dashboard">

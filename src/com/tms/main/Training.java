@@ -14,8 +14,16 @@ public class Training {
 	private String trainingType;
 	private String noOfHours;
 	private String startDate;
-	private Room room;
 	private String status;
+	private String Strength;
+
+	public String getStrength() {
+		return Strength;
+	}
+
+	public void setStrength(String strength) {
+		Strength = strength;
+	}
 
 	public Training() {
 		this.trainingID = null;
@@ -23,7 +31,6 @@ public class Training {
 		this.trainingType = null;
 		this.noOfHours = null;
 		this.startDate = null;
-		this.room = null;
 		this.status = null;
 	}
 
@@ -33,10 +40,6 @@ public class Training {
 
 	public String getStartDate() {
 		return startDate;
-	}
-
-	public Room getRoom() {
-		return room;
 	}
 
 	public String getStatus() {
@@ -49,10 +52,6 @@ public class Training {
 
 	public void setStartDate(String startDate) {
 		this.startDate = startDate;
-	}
-
-	public void setRoom(Room room) {
-		this.room = room;
 	}
 
 	public void setStatus(String status) {
@@ -71,15 +70,15 @@ public class Training {
 		
 		statement = DBManager.connect(conn);
 		try {
-			rs = statement.executeQuery("select Title, Category, No_of_hours, StartDate, RoomID, Status "
+			rs = statement.executeQuery("select Title, Category, No_of_hours, StartDate, Status, Strength "
 					+ "from Training where TrainingID = '" + this.trainingID +"'");
 			while(rs.next()){
 				this.trainingName = rs.getString(1);
 				this.trainingType = rs.getString(2);
 				this.noOfHours = rs.getString(3);
 				this.startDate = rs.getString(4);
-				this.room = new Room(rs.getString(5));
-				this.status = rs.getString(6);
+				this.status = rs.getString(5);
+				this.Strength = rs.getString(6);
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
